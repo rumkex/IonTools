@@ -1,0 +1,16 @@
+/out/
+
+Makefile
+Makefile.in
+bin/Solver
+/aclocal.m4
+/autom4te.cache/
+/config/
+/config.*
+/configure
+/m4/
+/stamp-h?
+.deps/
+.dirstamp
+*.o
+*~
