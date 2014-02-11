@@ -1,3 +1,2 @@
 #!/bin/sh
-automake --add-missing
-autoreconf --force -I config
+autoreconf --force --install -I config
