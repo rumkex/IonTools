@@ -28,7 +28,7 @@ private:
 	void writeResults(int layer, string filename)
 	{
 		fstream filestr(filename, fstream::out);
-		for (int i = 0; i < grids[layer]->getNodeCount(0); i++)
+		for (int i = 0; i < (int)grids[layer]->getNodeCount(0); i++)
 		{
 			for (int j = 0; j < grids[layer]->getNodeCount(1); j++)
 			{
@@ -59,7 +59,7 @@ public:
 			solvers.push_back(currentSolver);
 			
 			MatrixBuilder<2> mb(currentGrid);	
-			for (int i = 0; i < data.size(); i++)
+			for (int i = 0; i < (int)data.size(); i++)
 			{
 				mb.addRay(data[i]);
 			}

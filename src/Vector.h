@@ -10,7 +10,7 @@ struct Vector
 
 	Vector(T* coords)
 	{
-		for(int i = 0; i < dim; i++)
+		for (int i = 0; i < (int)dim; i++)
 			this->coords[i] = coords[i];
 	}
 
@@ -23,7 +23,7 @@ struct Vector
 	Vector<dim, T> operator* (const T &other) const
 	{
 		Vector<dim, T> c;
-		for(int i = 0; i < dim; i++)
+		for (int i = 0; i < (int)dim; i++)
 			c[i] = this->coords[i] * other;
 		return c;
 	}
@@ -36,7 +36,7 @@ struct Vector
 	Vector<dim, T> operator+ (const Vector<dim, T> &other) const
 	{
 		Vector<dim, T> c;
-		for(int i = 0; i < dim; i++)
+		for (int i = 0; i < (int)dim; i++)
 			c[i] = this->coords[i] + other[i];
 		return c;
 	}
@@ -44,7 +44,7 @@ struct Vector
 	Vector<dim, T> operator- (const Vector<dim, T> &other) const
 	{
 		Vector<dim, T> c;
-		for(int i = 0; i < dim; i++)
+		for (int i = 0; i < (int)dim; i++)
 			c[i] = this->coords[i] - other[i];
 		return c;
 	}
@@ -61,7 +61,7 @@ struct Vector
 	T getLengthSquared()
 	{
 		T l = (T)0;
-		for (int i = 0; i < dim; i++)
+		for (int i = 0; i < (int)dim; i++)
 		{
 			l += coords[i] * coords[i];
 		}
@@ -78,7 +78,7 @@ template <int dim, class T>
 std::ostream& operator<< (std::ostream& out, Vector<dim, T> &v)
 {
 	out << "(";
-	for (int i = 0; i < dim; i++)
+	for (int i = 0; i < (int)dim; i++)
 		out << v[i] << (i < dim - 1 ? ", ": "");
 	out << ")";
 	return out;

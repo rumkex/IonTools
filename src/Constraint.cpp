@@ -11,7 +11,7 @@ double LinearConstraint::getDifference()
 {	
 	double delta = 0.0;
 	auto diff = A.transform(parent->getResult());
-	for (int i = 0; i < diff.size(); i++)
+	for (int i = 0; i < (int)diff.size(); i++)
 	{
 		delta += std::abs(b[i] - diff[i]) / constraintNorm;
 	}

@@ -10,9 +10,9 @@ class MARTSolver: public Solver
 
     virtual void Solve(const SparseMatrix& A, const vector<double>& b, vector<double>& x)
     {
-        for (int i = 0; i < x.size(); i++)
+        for (int i = 0; i < (int)x.size(); i++)
             if (x[i] <= 0.0) x[i] = 1.0;
-        for (int i = 0; i < iterations; i++) Iterate(A, b, x);
+        for (int i = 0; i < (int)iterations; i++) Iterate(A, b, x);
     }
 
     int getIterations()
@@ -27,7 +27,7 @@ private:
     void Iterate(const SparseMatrix& A, const vector<double>& b, vector<double>& x)
     {
         double lambda = 1.0;
-        for (int i = 0; i < (int)b.size(); i++)
+        for (int i = 0; i < (int)(int)b.size(); i++)
         {
             double mult = b[i] / A[i].dot(x);
             for (auto it = A[i].cbegin(); it != A[i].cend(); it++)

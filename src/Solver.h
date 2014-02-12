@@ -34,7 +34,7 @@ public:
 
 	virtual void iterate()
 	{
-		for(int i = 0; i < constraints.size(); i++)
+		for (int i = 0; i < (int)constraints.size(); i++)
 			constraints[i]->iterate();
 	}
 

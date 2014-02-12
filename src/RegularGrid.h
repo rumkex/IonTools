@@ -82,7 +82,7 @@ public:
 	Point getNodeCoords(const Node &n) const
 	{
 		Point result;
-		for(int i = 0; i < dim; i++)
+		for (int i = 0; i < (int)dim; i++)
 			result[i] = origin[i] + (double) n[i] * getDelta(i);
 		return result;
 	}
@@ -91,7 +91,7 @@ public:
 	{
 		int mult = 1;
 		int result = 0;
-		for(int i = 0; i < dim; i++)
+		for (int i = 0; i < (int)dim; i++)
 		{
 			result += mult * n[i];
 			mult *= nodes[i];
@@ -132,7 +132,7 @@ public:
 	long getTotalNodeCount() const
 	{
 		long total = 1;
-		for (int i = 0; i < dim; i++)
+		for (int i = 0; i < (int)dim; i++)
 			total *= nodes[i];
 		return total;
 	}
@@ -142,7 +142,7 @@ private:
 	{
 		if (d < dim)
 		{
-			for (int i = 0; i < nodes[d]; i++)
+			for (int i = 0; i < (int)nodes[d]; i++)
 			{
 				id[d] = i;
 				computeDimension(func, id, d+1);

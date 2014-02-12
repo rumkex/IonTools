@@ -56,14 +56,14 @@ protected:
         rowCache.resize(b.size());
         normCache.clear();
         normCache.resize(b.size());
-        for (int i = 0; i < b.size(); i++)
+        for (int i = 0; i < (int)b.size(); i++)
         {
             rowCache[i] += A[i].sum();
             normCache[i] = A[i].lengthSquared();
             columnCache += A[i];
         }
 		constraintNorm = 0.0;
-		for (int i = 0; i < b.size(); i++)
+		for (int i = 0; i < (int)b.size(); i++)
 			constraintNorm += std::abs(b[i]);
     }
 

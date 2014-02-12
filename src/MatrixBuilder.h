@@ -51,7 +51,7 @@ public:
     {
 		if (mode == BuilderMode::Differential)
 		{
-			for (int i = 0; i < rows.size() - 1; i++)
+			for (int i = 0; i < (int)rows.size() - 1; i++)
 			{
 				rows[i] -= rows[i+1];
 				values[i] -= values[i+1];

@@ -26,7 +26,7 @@ protected:
 	virtual double interpolationFunction(const Vector<dim> &x0, const Vector<dim> &x) const
 	{
 		double result = 1.0;
-		for(int i = 0; i < dim; i++)
+		for (int i = 0; i < (int)dim; i++)
 		{
 			result *= LinearSpline(x0[i], x[i], i);
 		}

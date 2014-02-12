@@ -59,7 +59,7 @@ void SolverApp::loadData(const string& filename, vector<Ray<2>>& out)
 	int nrays;
 	string format;
 	filestr >> format >> nrays;
-	for (int i = 0; i < nrays; i++)
+	for (int i = 0; i < (int)nrays; i++)
 	{
 		Ray<2> ray;
 		filestr >> ray.start[0] >> ray.start[1] >>
@@ -89,7 +89,7 @@ void SolverApp::writeResults(const vector<double>& result, const shared_ptr<Regu
 	filestr << "# " << grid->getOrigin()[0] << '\t' << grid->getSize()[0] << '\t' 
 					 << grid->getOrigin()[1] << '\t' << grid->getSize()[1] << endl;
 	
-	for (int i = 0; i < grid->getNodeCount(0); i++)
+	for (int i = 0; i < (int)grid->getNodeCount(0); i++)
 	{
 		for (int j = 0; j < grid->getNodeCount(1); j++)
 		{
@@ -107,7 +107,7 @@ void SolverApp::detectRegion(const vector<Ray<2>>& data, Vector<2>& origin, Vect
 {
 	auto min = transform(data[0].start);
 	auto max = transform(data[0].start);
-	for (int i = 0; i < data.size(); i++)
+	for (int i = 0; i < (int)data.size(); i++)
 	{
 		Vector<2> v1 = transform(data[i].start);
 		min[0] = std::min(v1[0], min[0]);

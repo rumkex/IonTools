@@ -11,7 +11,7 @@ public:
 	{
 		const vector<double>& b = constraint->getRightSide();
 		const SparseMatrix& A = constraint->getMatrix();
-		for (int i = 0; i < b.size(); i++)
+		for (int i = 0; i < (int)b.size(); i++)
 		{
 			double C = (b[i] - A[i].dot(x)) / constraint->getNorm(i);
 			for (auto it = A[i].cbegin(); it != A[i].cend(); it++)
@@ -21,7 +21,7 @@ public:
 
 	virtual void solve(PositiveConstraint* constraint)
 	{
-		for (int i = 0; i < x.size(); i++)
+		for (int i = 0; i < (int)x.size(); i++)
 			if (x[i] < 0.0) x[i] = 0.0;
 	}
 };
