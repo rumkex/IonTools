@@ -39,7 +39,7 @@ public:
 		ArgvParser::ParserResults result = optionParser.parse(argc, argv);
 		
 		if (result != ArgvParser::NoParserError) 
-			throw std::runtime_error(optionParser.parseErrorDescription(result) + std::endl + std::string("Use --help option."));
+			throw std::runtime_error(optionParser.parseErrorDescription(result) + std::string("\nUse --help option."));
 		
 		const string defaultFilename("out.txt");
 			
