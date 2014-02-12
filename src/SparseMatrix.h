@@ -24,20 +24,10 @@ public:
 		return rows[index];
 	}
 
-	SparseVector transform(const SparseVector& src) const
+	vector<double> transform(const vector<double>& src) const
 	{
-		SparseVector result;
-		for (int i = 0; i < (int)rows.size(); i++)
-		{
-			result[i] = rows[i].dot(src);
-		}
-		return result;
-	}
-
-	SparseVector transform(const vector<double>& src) const
-	{
-		SparseVector result;
-		for (int i = 0; i < (int)rows.size(); i++)
+		vector<double> result(rows.size());
+		for(int i = 0; i < (int)rows.size(); i++)
 		{
 			result[i] = rows[i].dot(src);
 		}

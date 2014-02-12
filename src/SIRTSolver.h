@@ -25,9 +25,11 @@ public:
 			}
 		}
 		
-		SparseVector db = A.transform(dx);
+		vector<double> db = A.transform(dx);
 		double lambda = 0.0;
-		double dbnorm = db.lengthSquared();
+		double dbnorm = 0.0;
+		for (int i = 0; i < (int)b.size(); i++)
+			dbnorm += db[i]*db[i];
 		for (int i = 0; i < (int)b.size(); i++)
 			lambda += db[i] * (b[i] - A[i].dot(x)) / dbnorm;
 			
