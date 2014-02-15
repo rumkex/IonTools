@@ -13,6 +13,11 @@ class LinearInterpolator: public Interpolator<dim>
 public:
 	LinearInterpolator(RegularGrid<dim>* parent): parent(parent)
 	{}
+
+	virtual shared_ptr<Interpolator<dim>> clone(RegularGrid<dim>* parent) const
+	{
+		return shared_ptr<Interpolator<dim>>(new LinearInterpolator<dim>(parent));
+	}
 	
 	virtual SparseVector interpolatePoint(const Point &v) const
 	{

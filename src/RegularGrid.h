@@ -20,7 +20,7 @@ protected:
 
 	std::function<Point(const WorldPoint&)> transform;
 
-	Interpolator<dim>* interpolator;
+	shared_ptr<Interpolator<dim>> interpolator;
 
 public:
 	RegularGrid(Point origin, Point size, Node nodes): origin(origin), size(size), nodes(nodes), interpolator(0)
@@ -31,21 +31,35 @@ public:
 		};
 	}
 
-	~RegularGrid()
-	{		
-		if (interpolator) delete interpolator;
+	RegularGrid(const RegularGrid<dim>& other): origin(other.origin), size(other.size), nodes(other.nodes), transform(other.transform)
+	{
+		interpolator = other.interpolator->clone(this);
 	}
 
 	template<class TInterp>
 	void setInterpolator()
 	{
-		if (interpolator) delete interpolator;
-		interpolator = new TInterp(this);
+		interpolator = shared_ptr<Interpolator<dim>>(new TInterp(this));
 	}
 
 	void setTransform(std::function<Point(const WorldPoint&)> transform)
 	{
 		this->transform = transform;
+	}
+
+	void setOrigin(const Point& origin)
+	{		
+		this->origin = origin;
+	}
+
+	void setSize(const Point& size)
+	{
+		this->size = size;
+	}
+
+	void setNodeCount(const Node& nodes)
+	{
+		this->nodes = nodes;
 	}
 
 	bool isInside(const WorldPoint &v) const

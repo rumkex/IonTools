@@ -51,9 +51,9 @@ public:
 		int resY = baseGrid.getNodeCount(1);
 		for (int layer = 0; layer < config.Layers; layer++)
 		{
-			shared_ptr<Grid> currentGrid(new Grid(baseGrid.getOrigin(), baseGrid.getSize(), vector2(resX, resY)));
+			shared_ptr<Grid> currentGrid(new Grid(baseGrid));
+			currentGrid->setNodeCount(vector2(resX, resY));
 			grids.push_back(currentGrid);
-			currentGrid->setTransform(baseGrid.getTransform());
 			
 			shared_ptr<TSolver> currentSolver(new TSolver(currentGrid->getTotalNodeCount()));
 			solvers.push_back(currentSolver);
