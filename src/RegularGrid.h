@@ -3,11 +3,9 @@
 #include <functional>
 #include "Vector.h"
 #include "SparseVector.h"
+#include "Interpolator.h"
 
-template <int dim>
-class LinearInterpolator;
-
-template<int dim, class TInterp = LinearInterpolator<dim>>
+template<int dim>
 class RegularGrid
 {
 	typedef Vector<dim> Point;
@@ -22,15 +20,27 @@ protected:
 
 	std::function<Point(const WorldPoint&)> transform;
 
-	TInterp interpolator;
+	Interpolator<dim>* interpolator;
 
 public:
-	RegularGrid(Point origin, Point size, Node nodes): origin(origin), size(size), nodes(nodes), interpolator(TInterp(this))
+	RegularGrid(Point origin, Point size, Node nodes): origin(origin), size(size), nodes(nodes), interpolator(0)
 	{
 		transform = [](const WorldPoint& v)
 		{
 			return v;
 		};
+	}
+
+	~RegularGrid()
+	{		
+		if (interpolator) delete interpolator;
+	}
+
+	template<class TInterp>
+	void setInterpolator()
+	{
+		if (interpolator) delete interpolator;
+		interpolator = new TInterp(this);
 	}
 
 	void setTransform(std::function<Point(const WorldPoint&)> transform)
@@ -56,7 +66,7 @@ public:
 
 	SparseVector getLocalPointWeights(const Point &v) const
 	{
-		return interpolator.interpolatePoint(v);
+		return interpolator->interpolatePoint(v);
 	}
 
 	SparseVector getPointWeights(const WorldPoint &v) const

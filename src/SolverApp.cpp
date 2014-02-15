@@ -34,6 +34,7 @@ void SolverApp::run()
 	cout << "Determined size: (" << size[0] << ", " << size[1] << ")" << endl;
 
 	RegularGrid<2> baseGrid(origin, size, vector2(config.NodeCountX, config.NodeCountY));
+	baseGrid.setInterpolator<LinearInterpolator<2>>();
 	baseGrid.setTransform(transform);
 	const double r0 = 6800.0;
 	const double w = 100.0;
