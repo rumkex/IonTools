@@ -23,9 +23,19 @@ public:
         return A;
     }
 
+    void setMatrix(const SparseMatrix& A)
+    {
+         this->A = A;
+    }
+
     const vector<double>& getRightSide()
     {
         return b;
+    }
+
+    void setRightSide(const vector<double>& b)
+    {
+         this->b = b;
     }
 
     const vector<double>& getRowCache()
