@@ -19,7 +19,7 @@ public:
 		}
 	}
 
-	virtual void solve(PositiveConstraint* constraint)
+	virtual void solve(PositiveConstraint*)
 	{
 		for (int i = 0; i < (int)x.size(); i++)
 			if (x[i] < 0.0) x[i] = 0.0;

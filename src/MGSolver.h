@@ -76,7 +76,7 @@ public:
 				double e2 = 20. * nmax / 128.;
 				double e3 = 60. * nmax / 128.;
 				double e4 = 80. * nmax / 128.;
-				auto weightFunc = [e1, e2, e3, e4](double nx, double ny)
+				auto weightFunc = [e1, e2, e3, e4](double nx, double)
 				{
 					if (nx < e1 || nx > e4) return 0.0;
 					if (nx > e2 && nx < e3) return 1.0;
