@@ -9,6 +9,12 @@
 using namespace CommandLineProcessing;
 using namespace std;
 
+enum InterpolationMode
+{
+	Linear = 0,
+	Cubic = 1
+};
+
 class Configuration
 {
 public:
@@ -19,6 +25,7 @@ public:
 	bool UseAA = true;
 	bool UseWeights = false;
 	MatrixBuilder<2>::BuilderMode Mode;
+	InterpolationMode Interpolation;
 	
 	Configuration(int argc, char** argv)
 	{
@@ -33,6 +40,7 @@ public:
 		optionParser.defineOption("i", "Iteration limit (default is no limit)", ArgvParser::OptionRequiresValue);
 		optionParser.defineOption("l", "Layer count (for multigrid mode, default is 1 = no MG)", ArgvParser::OptionRequiresValue);
 		optionParser.defineOption("solver", "Solver type: ART, SIRT or SART", ArgvParser::OptionRequiresValue);
+		optionParser.defineOption("interpolate", "Interpolation: linear or cubic (default = linear)", ArgvParser::OptionRequiresValue);
 		optionParser.defineOptionAlternative("transform", "t");
 		optionParser.defineOptionAlternative("mode", "m");
 		
@@ -61,6 +69,13 @@ public:
 		UseAA = optionParser.foundOption("enable-aa");
 		UseWeights = optionParser.foundOption("enable-weights");
 		
+		if (optionParser.foundOption("interpolate") && (optionParser.optionValue("interpolate") == "cubic"))
+		{
+			Interpolation = InterpolationMode::Cubic;
+		}
+		else
+			Interpolation = InterpolationMode::Linear;
+
 		if (optionParser.foundOption("mode"))
 		{
 			if (optionParser.optionValue("mode") == "abs")

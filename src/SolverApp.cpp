@@ -3,6 +3,7 @@
 #include "Vector.h"
 #include "SparseVector.h"
 #include "LinearInterpolator.h"
+#include "CubicInterpolator.h"
 #include "SIRTSolver.h"
 #include "ARTSolver.h"
 #include "SARTSolver.h"
@@ -34,7 +35,10 @@ void SolverApp::run()
 	cout << "Determined size: (" << size[0] << ", " << size[1] << ")" << endl;
 
 	RegularGrid<2> baseGrid(origin, size, vector2(config.NodeCountX, config.NodeCountY));
-	baseGrid.setInterpolator<LinearInterpolator<2>>();
+	if (config.Interpolation == InterpolationMode::Cubic)
+		baseGrid.setInterpolator<CubicInterpolator<2>>();
+	else
+		baseGrid.setInterpolator<LinearInterpolator<2>>();
 	baseGrid.setTransform(transform);
 	const double r0 = 6800.0;
 	const double w = 100.0;

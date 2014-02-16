@@ -37,6 +37,11 @@ protected:
 		}
 		return result;
 	}
+
+	virtual double getRadius() const
+	{
+		return 0;
+	}
 	
 private:
 	SparseVector interpolateDimension(const Point &v, Node &id, int d) const
@@ -47,8 +52,9 @@ private:
 			Point origin = parent->getOrigin();
 			Node nodes = parent->getNodeCount();
 			double x = (v[d] - origin[d]) / parent->getDelta(d);
-			int start = clamp(int(floor(x)), 0, nodes[d] - 1);
-			int end = clamp(int(ceil(x)), 0, nodes[d] - 1);
+			double r = this->getRadius();
+			int start = clamp(int(floor(x-r)), 0, nodes[d] - 1);
+			int end = clamp(int(ceil(x+r)), 0, nodes[d] - 1);
 			for (int n = start; n <= end; n++)
 			{
 				id[d] = n;
