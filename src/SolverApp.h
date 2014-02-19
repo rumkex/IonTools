@@ -28,5 +28,5 @@ private:
 	function<Vector<2>(const Vector<2>&)> setTransform();
 	void detectRegion(const vector<Ray<2>>& data, Vector<2>& origin, Vector<2>& size, function<Vector<2>(const Vector<2>&)>& transform);
 	template <class TSolver> void compute(const RegularGrid<2>& baseGrid, const vector<Ray<2>>& data, function<double(const Vector<2>&)> baseModel);
-	void writeResults(const vector<double>& solver, const shared_ptr<RegularGrid<2>>& grid);
+	void writeResults(string filename, const vector<vector<double>>& result, const RegularGrid<2>& grid);
 };

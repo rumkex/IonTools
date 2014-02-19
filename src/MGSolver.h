@@ -2,9 +2,6 @@
 #include <memory>
 #include <functional>
 #include <fstream>
-#ifdef DEBUG
-	#include <sstream>
-#endif
 #include <assert.h>
 
 #include "RegularGrid.h"
@@ -23,25 +20,6 @@ private:
 	const Configuration& config;
 	vector<shared_ptr<Grid>> grids;
 	vector<shared_ptr<TSolver>> solvers;
-	
-#ifdef DEBUG
-	void writeResults(int layer, string filename)
-	{
-		fstream filestr(filename, fstream::out);
-		for (int i = 0; i < (int)grids[layer]->getNodeCount(0); i++)
-		{
-			for (int j = 0; j < grids[layer]->getNodeCount(1); j++)
-			{
-				auto v = vector2(i, j);
-				filestr << grids[layer]->getValueAtNode(v, solvers[layer]->getResult());
-				if (j != grids[layer]->getNodeCount(1)-1) filestr << '\t';
-			}
-			filestr << endl;
-		}
-		filestr.flush();
-		filestr.close();
-	}
-#endif
 	
 public:
 	MGSolver(const Configuration& config, const Grid& baseGrid, const vector<Ray<2>>& data,
@@ -67,7 +45,8 @@ public:
 			currentSolver->addConstraint(mb.getConstraint());
 			if (config.UseAA) 
 				currentSolver->addConstraint(new LaplaceConstraint(*currentGrid));
-			currentSolver->addConstraint(new PositiveConstraint());		
+			if (layer == config.Layers-1) 
+				currentSolver->addConstraint(new PositiveConstraint());		
 			
 			if (config.UseWeights) 
 			{
@@ -95,11 +74,12 @@ public:
 				currentSolver->setWeights(weights);
 			}
 			 
-			currentGrid->forEachNode([baseModel, currentSolver, currentGrid](const Vector<2, int>& n)
-			{
-				auto v = currentGrid->getNodeCoords(n);
-				currentSolver->getResult()[currentGrid->getNodeID(n)] = baseModel(v);
-			});
+			if (layer == config.Layers-1)
+				currentGrid->forEachNode([baseModel, currentSolver, currentGrid](const Vector<2, int>& n)
+				{
+					auto v = currentGrid->getNodeCoords(n);
+					currentSolver->getResult()[currentGrid->getNodeID(n)] = baseModel(v);
+				});
 			
 			resX /= 2;
 			resY /= 2;
@@ -107,67 +87,56 @@ public:
 	}
 	
 	void solve()
-	{		  
-		for (int i = solvers.size()-1; i >= 0; i--)
-		{			
-#ifdef DEBUG		
-			writeResults(i, "debug-" + std::to_string(i) + "-presolve.txt");
-#endif
-			int iter = 0;
-			double delta = numeric_limits<double>::max();
-			double newdelta = delta;    
-
-			while ((iter < config.MaxIter))
+	{
+		// Coarse >> fine
+		for (auto it = solvers.rbegin(); it != solvers.rend(); it++)
+		{
+			auto solver = *it;
+			//Correct the error from previous layer, if present
+			if (it != solvers.rbegin())
 			{
-				solvers[i]->iterate();
-				delta = newdelta;
-				newdelta = solvers[i]->getConstraint(0)->getDifference();
-				iter++;
-#ifndef DEBUG	
-				if (iter % 100 == 0)
-#endif
-					cout << "Iteration " << iter << ": " << newdelta << endl;
+				// Compute the error on previous layer
+				auto prevSolver = *(it-1);
+				LinearConstraint* constraint = (LinearConstraint*)prevSolver->getConstraint(0);
+				auto A = constraint->getMatrix();
+				auto b = constraint->getRightSide();
+				auto err = A.transform(prevSolver->getResult());
+				for (int k = 0; k < (int)b.size(); k++)
+				{
+					err[k] = b[k] - err[k];
+				}
+
+				// And solve it instead in current layer
+				((LinearConstraint*)solver->getConstraint(0))->setRightSide(err);
 			}
-			cout << "Layer " << grids[i]->getNodeCount(0) << "x" << grids[i]->getNodeCount(1) << " took " << iter << " iterations" << endl;
-			if (i > 0) cherrypick(i, i-1);
-				
-#ifdef DEBUG		
-			writeResults(i, "debug-" + std::to_string(i) + "-postsolve.txt");
-#endif
+
+			// Calculate the correction
+			for (int iter = 0; iter < config.MaxIter; iter++) solver->iterate();
 		}
 	}
-	
-	shared_ptr<TSolver> getTopSolver()
+
+	vector<vector<double>> getResult()
 	{
-		return solvers.front();
+		return getResult(-1);
 	}
-	
-	shared_ptr<Grid> getTopGrid()
+
+	vector<vector<double>> getResult(int layer)
 	{
-		return grids.front();
-	}
-	
-private:
-	void cherrypick(int layerFrom, int layerTo) 
-	{
-		auto srcSolver = solvers[layerFrom];
-		auto srcGrid = grids[layerFrom];
-		auto dstSolver = solvers[layerTo];
-		auto dstGrid = grids[layerTo];
-		
-		int counter = 0;
-		
-		std::function<void(const Vector<2, int>&)> interpFunc = [srcGrid, dstGrid, srcSolver, dstSolver, &counter](const Vector<2, int>& n)
+		vector<vector<double>> result(grids.front()->getNodeCount(0), vector<double>(grids.front()->getNodeCount(1)));
+		for (int i = 0; i < (int)grids.front()->getNodeCount(0); i++)
 		{
-			counter++;
-			Vector<2> v = dstGrid->getNodeCoords(n);
-			int id = dstGrid->getNodeID(n);
-			double val = srcGrid->getValueAtLocal(v, srcSolver->getResult());
-			dstSolver->getResult()[id] = val;
-		};
-		
-		dstGrid->forEachNode(interpFunc);
-		cout << endl;
-		cout << "Interpolated to " << counter << " nodes." << endl;
+			for (int j = 0; j < (int)grids.front()->getNodeCount(1); j++)
+			{
+				auto v = grids.front()->getNodeCoords(vector2(i, j));
+				double value = 0.0;
+				if (layer == -1)
+					for (int l = 0; l < (int)solvers.size(); l++)
+						value += grids[l]->getValueAtLocal(v, solvers[l]->getResult());
+				else
+					value = grids[layer]->getValueAtLocal(v, solvers[layer]->getResult());
+				result[i][j] = value;
+			}
+		}
+		return result;
 	}
 };

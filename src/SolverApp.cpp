@@ -83,24 +83,26 @@ void SolverApp::compute(const RegularGrid<2>& baseGrid, const vector<Ray<2>>& da
 	solver.solve();
 
 	cout << "Finished in " << (float)(clock() - start) / CLOCKS_PER_SEC << "s" << endl;
-
-	writeResults(solver.getTopSolver()->getResult(), solver.getTopGrid());
+	
+	for (int layer = 0; layer < config.Layers; layer++ )
+		writeResults("debug-" + to_string(layer) + ".txt", solver.getResult(layer), baseGrid);
+	
+	writeResults(config.OutFilename, solver.getResult(), baseGrid);
 }
 
-void SolverApp::writeResults(const vector<double>& result, const shared_ptr<RegularGrid<2>>& grid)
+void SolverApp::writeResults(string filename, const vector<vector<double>>& result, const RegularGrid<2>& grid)
 {
-	fstream filestr(config.OutFilename, fstream::out);
+	fstream filestr(filename, fstream::out);
 	
-	filestr << "# " << grid->getOrigin()[0] << '\t' << grid->getSize()[0] << '\t' 
-					 << grid->getOrigin()[1] << '\t' << grid->getSize()[1] << endl;
+	filestr << "# " << grid.getOrigin()[0] << '\t' << grid.getSize()[0] << '\t' 
+					 << grid.getOrigin()[1] << '\t' << grid.getSize()[1] << endl;
 	
-	for (int i = 0; i < (int)grid->getNodeCount(0); i++)
+	for (int i = 0; i < (int)result.size(); i++)
 	{
-		for (int j = 0; j < grid->getNodeCount(1); j++)
+		for (int j = 0; j < (int)result[i].size(); j++)
 		{
-			auto v = vector2(i, j);
-			filestr << grid->getValueAtNode(v, result);
-			if (j != grid->getNodeCount(1)-1) filestr << '\t';
+			if (j != 0) filestr << '\t';
+			filestr << result[i][j];
 		}
 		filestr << endl;
 	}
