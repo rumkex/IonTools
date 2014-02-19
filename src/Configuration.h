@@ -30,6 +30,7 @@ public:
 	Configuration(int argc, char** argv)
 	{
 		ArgvParser optionParser;
+		optionParser.setIntroductoryDescription("IonTools solver. Basic usage: Solver -n=<node count> [options] <input file> [<output file>]");
 		optionParser.setHelpOption();
 		
 		optionParser.defineOption("enable-aa", "Enable smoothing");
@@ -47,8 +48,11 @@ public:
 		ArgvParser::ParserResults result = optionParser.parse(argc, argv);
 		
 		if (result != ArgvParser::NoParserError) 
-			throw std::runtime_error(optionParser.parseErrorDescription(result) + std::string("\nUse --help option."));
+			throw std::runtime_error(optionParser.parseErrorDescription(result));
 		
+		if (optionParser.arguments() == 0)
+			throw std::runtime_error("Input file not specified.");
+
 		const string defaultFilename("out.txt");
 			
 		InFilename = optionParser.argument(0);
