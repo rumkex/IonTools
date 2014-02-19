@@ -10,12 +10,13 @@ import os.path as path
 
 from shared import update_progress, plot_data
 
+baseflags = ['--interpolate=linear', '--enable-weights']
+
 config = {
-    "base": ['-n=128', '--enable-weights'],
-    "smoothing": ['-n=128', '--enable-weights', '--enable-aa'],
-    "128x128-multigrid-3-layers": ['-n=128', '--enable-weights', '-l=3'],
-    "64x128-multigrid-3-layers": ['-n=64x128', '--enable-weights', '-l=3'],
-    "128x64-multigrid-3-layers": ['-n=128x64', '--enable-weights', '-l=3'],
+    "base": baseflags + ['-n=128'],
+    "smoothing": baseflags + ['-n=128', '--enable-aa'],
+    "128x128-multigrid-3-layers": baseflags + ['-n=128', '-l=3'],
+    "64x128-multigrid-3-layers": baseflags + ['-n=64x128', '-l=3'],
 }
 
 def reconstruct(filename, flags, outname):
