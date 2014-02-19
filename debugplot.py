@@ -2,7 +2,7 @@
 import time
 import os
 
-from shared import plotdata
+from shared import plot_data
 
 debugfiles = [f for f in os.listdir('.') if f.startswith('debug-') and f.endswith('.txt')]
 
